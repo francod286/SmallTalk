@@ -1,4 +1,4 @@
-﻿| cine nom s1 s2 s3 emp1 emp2 emp3 p1 p2 p3 t OcuEmpleado empTicketera empVagos pSelect pConSala genAccion genInfantil genComedia x d listaPeliculas cantLocalidades idPelicula usuario resultado valorNumerico|
+﻿| cine nom s1 s2 s3 emp1 emp2 emp3 p1 p2 p3 t OcuEmpleado empVagos pSelect pConSala genAccion genInfantil genComedia x d listaPeliculas cantLocalidades idPelicula usuario resultado valorNumerico pCol|
 
 nom := 'Cinopolis'.
 "Creo Cine"
@@ -78,13 +78,13 @@ p6 setSala: s6.
 
 "---------------------------------------------------metodos --------------------------------------------------------------------"
 "reject col2:= alumnos reject:[:alu| alu verNota=8].   -->  Retorna en otra colección los alumnos con nota distinto a 8"
-empVagos := cine mostrarTrabajadoresLibres. "inspect."
+"empVagos := cine mostrarTrabajadoresLibres. inspect.                    Opcion 4"
 
 "select col1:= alumnos select:[:alu| alu verNota=8]. -->   Retorna en otra colección los alumnos con nota igual a 8"
-pSelect := (cine filtrarPorDuracionMenorQue: 110). "inspect ."
+"pSelect := (cine filtrarPorDuracionMenorQue: 110). inspect .            Opcion 5"
 
 "Listar todas los nombres de las peliculas ---------collect col3:= alumnos collect:[:alu| alu verNombre].  --> Retorna en otra colección los nombres de los alumnos"
-cine listarTodosLosNombreDePeliculas. "inspect."
+"cine listarTodosLosNombreDePeliculas. inspect.                                 Opcion 6"
 
 "--------------------------------Diccionario----------------------------------"
 
@@ -99,11 +99,14 @@ d := Dictionary new
 yourself.
 
 
-Transcript show: 'BIENVENIDO A ', cine getNombre printString;
+Transcript show: '	====BIENVENIDO A ', cine getNombre printString,'===='; show cr;
 show: '
 1) Comprar Asientos
 2) Listar Peliculas
 3) Total recaudado
+4) Listar Empleados desocupados
+5) Listar Pelicula por Duracion
+6) Listar todos los nombres de las Peliculas
 9) Salir
 '.
 menu:= IntegerPrompter prompt: 'Ingrese una opcion: '.
@@ -141,7 +144,7 @@ menu:= IntegerPrompter prompt: 'Ingrese una opcion: '.
 
 
 		(( ( (usuario getSala)getCapacidad) - cantLocalidades)   <   0) 
-		ifTrue: [Transcript show: 'No se puede comprar asientos' ]
+		ifTrue: [Prompter prompt: 'No se puede comprar esa cantidad de asientos'. Transcript clear. ]
 		ifFalse: [ (usuario getSala) setCapacidad: ( ( (usuario getSala)getCapacidad) - cantLocalidades).
 		cine setventaAcomulada:(usuario getPrecio*cantLocalidades ).
 		Transcript clear.].	"ok"
@@ -165,12 +168,52 @@ menu:= IntegerPrompter prompt: 'Ingrese una opcion: '.
 	Transcript clear.
 	].
 
+	(menu=4)ifTrue:
+	[
+	Transcript clear.
+	empVagos := cine mostrarTrabajadoresLibres.
+	empVagos do: [:x| Transcript 
+	show: 'Nombre: ', x getNombre printString, ' ';
+	show: 'Apellido: ', x getApellido printString, ' ';
+	show: 'DNI: ', x getDni printString, ' ';
+	show: 'Ocupacion: ', x getOcupacion printString, ' ';
+	show: '¿Esta ocupado?: ', x getBool printString, ' ';
+	cr. ].
+	Prompter prompt: 'Enter para continuar'.
+	Transcript clear.
+	].
 
-Transcript show: 'BIENVENIDO A ', cine getNombre printString;
+	(menu=5)ifTrue:
+	[
+	Transcript clear.
+	t := IntegerPrompter prompt: 'Ingrese duracion pelicula en minutos: '.
+	Transcript show: 'Las peliculas con menor duracion de ', t printString , ' minutos son : '; cr.
+	pSelect := (cine filtrarPorDuracionMenorQue: t).
+	cine informacionPeliculas: pSelect .
+	Prompter prompt: 'Enter para continuar'.
+	Transcript clear.
+	].
+
+	(menu=6)ifTrue:
+	[
+	Transcript clear.
+	pCol := cine listarTodosLosNombreDePeliculas.
+	1 to: (pCol size ) do: [:pos | Transcript show: pos printString ,') ',(pCol at: pos) printString ,' '; cr. ].
+	"pCol do: [:nom| Transcript 
+	show: 'Nombre: ', nom , ' '; cr. ]."
+	Prompter prompt: 'Enter para continuar'.
+	Transcript clear.
+	].
+
+
+Transcript show: '	====BIENVENIDO A ', cine getNombre printString,'===='; show cr;
 show: '
 1) Comprar Asientos
 2) Listar Peliculas
 3) Total recaudado
+4) Listar Empleados desocupados
+5) Listar Pelicula por Duracion
+6) Listar todos los nombres de las Peliculas
 9) Salir
 '.
 menu := IntegerPrompter prompt: 'Ingrese una opcion:  '.
